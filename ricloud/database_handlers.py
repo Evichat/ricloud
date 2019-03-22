@@ -31,8 +31,11 @@ class DatabaseHandler(object):
 
     def handle_query(self, query, args=None, retry=2):
         try:
+            print ("query:" + query)
+            print (args)
             cursor = self.db_con.cursor()
             cursor.execute(query, args=args)
+            print ("valar dohairis")
             self.db_con.commit()
         except (AttributeError, MySQLdb.OperationalError):
             if not retry:

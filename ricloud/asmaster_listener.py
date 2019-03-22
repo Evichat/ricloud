@@ -79,7 +79,7 @@ class AsmasterSystemHandler(AsmasterHandler):
     TYPE = 'system'
     TABLE = 'system'
     QUERY_TEMPLATE = """
-        INSERT INTO {table} (`received`, `headers`, `body`, `message`, `code`)
+        INSERT INTO `{table}` (`received`, `headers`, `body`, `message`, `code`)
         VALUES (NOW(), %(headers)s, %(body)s, %(message)s, %(code)s)
     """
 
@@ -113,7 +113,7 @@ class AsmasterFeedHandler(AsmasterHandler):
     TYPE = 'fetch-data'
     TABLE = 'feed'
     QUERY_TEMPLATE = """
-        INSERT INTO {table} (`service`, `received`, `account_id`, `device_id`, `device_tag`, `headers`, `body`)
+        INSERT INTO `{table}` (`service`, `received`, `account_id`, `device_id`, `device_tag`, `headers`, `body`)
         VALUES (%(service)s, NOW(), %(account_id)s, %(device_id)s, %(device_tag)s, %(headers)s, %(body)s)
     """
 
@@ -147,7 +147,7 @@ class AsmasterDownloadFileHandler(AsmasterHandler):
     TYPE = 'download-file'
     TABLE = 'file'
     QUERY_TEMPLATE = """
-        INSERT INTO {table}
+        INSERT INTO `{table}`
             (`service`, `received`, `account_id`, `device_id`, `device_tag`, `headers`, `location`, `file_id`)
         VALUES (
             %(service)s, NOW(), %(account_id)s, %(device_id)s,
