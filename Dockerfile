@@ -8,4 +8,4 @@ WORKDIR /copypastafolder
 
 RUN pip2 install -r requirements.txt
 
-CMD ["python","-m","ricloud","john.appleseed@reincubate.com","--password=joshua"]
+CMD python -m ricloud
