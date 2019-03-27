@@ -79,7 +79,7 @@ class AsmasterSystemHandler(AsmasterHandler):
     TYPE = 'system'
     TABLE = 'system'
     QUERY_TEMPLATE = """
-        INSERT INTO `{table}` (`received`, `headers`, `body`, `message`, `code`)
+        INSERT INTO {table} (`received`, `headers`, `body`, `message`, `code`)
         VALUES (NOW(), %(headers)s, %(body)s, %(message)s, %(code)s)
     """
 
