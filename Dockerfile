@@ -7,5 +7,6 @@ COPY . /copypastafolder
 WORKDIR /copypastafolder
 
 RUN pip2 install -r requirements.txt
+# RUN pip2 install python-mysqldb
 
-CMD python -m ricloud
+CMD python -m ricloud --listen
