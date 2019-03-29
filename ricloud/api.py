@@ -195,7 +195,6 @@ class Task(object):
         self._result = None
         self._resolved = False
         self.callback = callback
-
         self.timer = time.time()
 
     @property

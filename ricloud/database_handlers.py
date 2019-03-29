@@ -1,5 +1,6 @@
 import logging
 import MySQLdb
+import requests
 
 from . import conf
 
@@ -20,6 +21,14 @@ class DatabaseHandler(object):
         if not self._db_con:
             logger.debug('Establishing new database connection to database `%s`.', self.db_name)
             import MySQLdb
+
+            print ('db_con')
+            print (conf.LISTENER_DB_HOST)
+            print (conf.LISTENER_DB_PORT)
+            print (conf.LISTENER_DB_USER)
+            print (conf.LISTENER_DB_PASSWORD)
+            print (self.db_name)
+            
             self._db_con = MySQLdb.connect(
                 host=conf.LISTENER_DB_HOST,
                 port=int(conf.LISTENER_DB_PORT),
@@ -45,3 +54,8 @@ class DatabaseHandler(object):
             logger.warn('Query failed, attempting to refresh connection (%d retries remaining)', retry)
             self._db_con = None
             self.handle_query(query, args=args, retry=retry - 1)
+        else:
+            print ("initiating callback") 
+            r = requests.post('http://localhost:3000/test')
+            print (r.status_code)
+
