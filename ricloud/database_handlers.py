@@ -1,5 +1,6 @@
 import logging
-import MySQLdb
+# import MySQLdb
+import psycopg2
 import requests
 
 from . import conf
@@ -20,21 +21,21 @@ class DatabaseHandler(object):
     def db_con(self):
         if not self._db_con:
             logger.debug('Establishing new database connection to database `%s`.', self.db_name)
-            import MySQLdb
+            import psycopg2
 
-            print ('db_con')
-            print (conf.LISTENER_DB_HOST)
-            print (conf.LISTENER_DB_PORT)
-            print (conf.LISTENER_DB_USER)
-            print (conf.LISTENER_DB_PASSWORD)
-            print (self.db_name)
-            
-            self._db_con = MySQLdb.connect(
+            # print ('db_con')
+            # print (conf.LISTENER_DB_HOST)
+            # print (conf.LISTENER_DB_PORT)
+            # print (conf.LISTENER_DB_USER)
+            # print (conf.LISTENER_DB_PASSWORD)
+            # print (self.db_name)
+
+            self._db_con = psycopg2.connect(
                 host=conf.LISTENER_DB_HOST,
                 port=int(conf.LISTENER_DB_PORT),
                 user=conf.LISTENER_DB_USER,
-                passwd=conf.LISTENER_DB_PASSWORD,
-                db=self.db_name
+                password=conf.LISTENER_DB_PASSWORD,
+                dbname=self.db_name
             )
         return self._db_con
 
@@ -43,10 +44,10 @@ class DatabaseHandler(object):
             print ("query:" + query)
             print (args)
             cursor = self.db_con.cursor()
-            cursor.execute(query, args=args)
-            print ("valar dohairis")
+            cursor.execute(query, args)
+            # print ("valar dohairis")
             self.db_con.commit()
-        except (AttributeError, MySQLdb.OperationalError):
+        except (AttributeError, psycopg2.OperationalError):
             if not retry:
                 logger.error('Query failed, no retries remaining.', exc_info=True)
                 raise
@@ -56,6 +57,6 @@ class DatabaseHandler(object):
             self.handle_query(query, args=args, retry=retry - 1)
         else:
             print ("initiating callback") 
-            r = requests.post('http://localhost:3000/test')
-            print (r.status_code)
+            # r = requests.post('http://localhost:3000/test')
+            # print (r.status_code)
 
