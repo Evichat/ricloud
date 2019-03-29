@@ -23,12 +23,12 @@ class DatabaseHandler(object):
             logger.debug('Establishing new database connection to database `%s`.', self.db_name)
             import psycopg2
 
-            # print ('db_con')
-            # print (conf.LISTENER_DB_HOST)
-            # print (conf.LISTENER_DB_PORT)
-            # print (conf.LISTENER_DB_USER)
-            # print (conf.LISTENER_DB_PASSWORD)
-            # print (self.db_name)
+            print ('db_con')
+            print (conf.LISTENER_DB_HOST)
+            print (conf.LISTENER_DB_PORT)
+            print (conf.LISTENER_DB_USER)
+            print (conf.LISTENER_DB_PASSWORD)
+            print (self.db_name)
 
             self._db_con = psycopg2.connect(
                 host=conf.LISTENER_DB_HOST,
