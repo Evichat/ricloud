@@ -41,11 +41,8 @@ class DatabaseHandler(object):
 
     def handle_query(self, query, args=None, retry=2):
         try:
-            print ("query:" + query)
-            print (args)
             cursor = self.db_con.cursor()
             cursor.execute(query, args)
-            # print ("valar dohairis")
             self.db_con.commit()
         except (AttributeError, psycopg2.OperationalError):
             if not retry:
@@ -58,5 +55,6 @@ class DatabaseHandler(object):
         else:
             print ("initiating callback") 
             # r = requests.post('http://localhost:3000/test')
-            # print (r.status_code)
+            r = requests.post('https://staging.evichat.com/ricloud_listener')
+            print (r.status_code)
 
