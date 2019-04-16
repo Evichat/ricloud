@@ -144,6 +144,7 @@ class AsmasterMessageHandler(AsmasterFeedHandler):
 
 
 class AsmasterDownloadFileHandler(AsmasterHandler):
+    print('AsmasterDownloadFileHandler')
     TYPE = 'download-file'
     TABLE = 'file'
     QUERY_TEMPLATE = """
@@ -157,6 +158,7 @@ class AsmasterDownloadFileHandler(AsmasterHandler):
 
     @utils.profile('file handler took', to_log=True)
     def on_complete_message(self, header, stream):
+        print('on_complete_message')
         task = AsmasterTask(header.get('task_id', 'system'), callback=self.generate_callback())
         task.headers = header
         task.result = stream
@@ -167,17 +169,24 @@ class AsmasterDownloadFileHandler(AsmasterHandler):
         return True
 
     def generate_callback(self):
-
+        print('generate_callback')
         @utils.profile('file callback took', to_log=True)
         def callback(task):
+            print('callback')
             target_path = self.get_target_path(task.headers)
+            print('target_path')
+            print(target_path)
 
             file_path = utils.save_file_stream_to_target_path(task.result, target_path)
+            print('file_path')
+            print(file_path)
 
             # Close the temp file here as we did not let `handle` do so above.
             task.result.close()
 
             file_id = task.headers['file_id']
+            print('file_id')
+            print(file_id)
 
             if len(file_id) > 4096:
                 raise StreamError("Invalid download file request, file_id is too long")
@@ -201,7 +210,11 @@ class AsmasterDownloadFileHandler(AsmasterHandler):
 
     @staticmethod
     def get_target_path(headers):
+        print('get_target_path')
+
         filename = AsmasterDownloadFileHandler.file_id_to_file_name(headers['file_id'])
+        print('filename~')
+        print(filename)
 
         path = os.path.join(
             headers['service'],
@@ -209,11 +222,15 @@ class AsmasterDownloadFileHandler(AsmasterHandler):
             str(headers.get('device_id', "None")),
             filename
         )
+        
+        print('path')
+        print(path)
 
         return path
 
     @staticmethod
     def file_id_to_file_name(file_id):
+        print('file_id_to_file_name')
         """Sometimes file ids are not the file names on the device, but are instead generated
         by the API. These are not guaranteed to be valid file names so need hashing.
         """
