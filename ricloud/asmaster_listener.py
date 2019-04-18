@@ -4,6 +4,9 @@ import json
 import time
 import hashlib
 import logging
+import boto3
+import ConfigParser
+import io
 
 from .api import Api, Task
 from .ricloud import RiCloud
@@ -204,9 +207,23 @@ class AsmasterDownloadFileHandler(AsmasterHandler):
             }
 
             database_handler.handle_query(query, args)
+            self.upload_to_s3(file_path, file_id)
             self.api.result_consumed(task.uuid)
 
         return callback
+
+    @staticmethod
+    def upload_to_s3(file_path, file_id):
+        print('upload_to_s3')
+      
+        # Key = "/Users/nilu/workspace/ricloud/output/asrelay-itunes/397699/161961/25ff7d80c89599b67e5a00220d8753cc668427f6"
+        # outputName = "25ff7d80c89599b67e5a00220d8753cc668427f6"
+
+        bucketName = 'evichat-local'
+        s3 = boto3.client('s3')
+        s3.upload_file(file_path,bucketName,file_id)
+      
+        return 'true'
 
     @staticmethod
     def get_target_path(headers):

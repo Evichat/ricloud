@@ -27,7 +27,7 @@ def get_or_create_filepath(filename, directory=''):
     if not os.path.exists(absolute_dir):
         os.makedirs(absolute_dir)
 
-    print os.path.join(absolute_dir, filename)
+    print(os.path.join(absolute_dir, filename))
 
     return os.path.join(absolute_dir, filename)
 
