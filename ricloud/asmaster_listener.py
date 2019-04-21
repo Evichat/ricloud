@@ -216,12 +216,15 @@ class AsmasterDownloadFileHandler(AsmasterHandler):
     def upload_to_s3(file_path, file_id):
         print('upload_to_s3')
       
-        # Key = "/Users/nilu/workspace/ricloud/output/asrelay-itunes/397699/161961/25ff7d80c89599b67e5a00220d8753cc668427f6"
-        # outputName = "25ff7d80c89599b67e5a00220d8753cc668427f6"
+        # file_path = "/Users/nilu/workspace/ricloud/output/asrelay-itunes/397699/161961/25ff7d80c89599b67e5a00220d8753cc668427f6"
+        # file_id = "25ff7d80c89599b67e5a00220d8753cc668427f6"
 
-        bucketName = 'evichat-local'
+        outputName = re.findall(r"asrelay-itunes\/.*", file_path)[0]
+        print(outputName)
+
+        bucketName = 'evichat-staging'
         s3 = boto3.client('s3')
-        s3.upload_file(file_path,bucketName,file_id)
+        s3.upload_file(file_path,bucketName,outputName)
       
         return 'true'
 

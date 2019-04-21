@@ -142,7 +142,7 @@ def main():
         api.setup()
 
         if(arguments["--list-services"]):
-            # print json.dumps(api.list_services(), indent=2)
+            print json.dumps(api.list_services(), indent=2)
             print "hello Picard"
             print self.ricloud.StorageConfig.list()
         if(arguments["--list-subscriptions"]):
