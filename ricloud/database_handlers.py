@@ -57,6 +57,6 @@ class DatabaseHandler(object):
         else:
             print ("initiating callback") 
             # r = requests.get('http://localhost:3000/social_integration/ricloud_listener')
-            r = requests.get('https://staging.evichat.com/social_integration/ricloud_listener')
+            r = requests.get('https://www.evichat.com/social_integration/ricloud_listener')
             print (r.status_code)
 
