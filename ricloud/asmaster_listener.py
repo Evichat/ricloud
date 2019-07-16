@@ -4,6 +4,9 @@ import json
 import time
 import hashlib
 import logging
+import boto3
+import ConfigParser
+import io
 
 from .api import Api, Task
 from .ricloud import RiCloud
@@ -79,7 +82,7 @@ class AsmasterSystemHandler(AsmasterHandler):
     TYPE = 'system'
     TABLE = 'system'
     QUERY_TEMPLATE = """
-        INSERT INTO `{table}` (`received`, `headers`, `body`, `message`, `code`)
+        INSERT INTO {table} (received, headers, body, message, code)
         VALUES (NOW(), %(headers)s, %(body)s, %(message)s, %(code)s)
     """
 
@@ -113,7 +116,7 @@ class AsmasterFeedHandler(AsmasterHandler):
     TYPE = 'fetch-data'
     TABLE = 'feed'
     QUERY_TEMPLATE = """
-        INSERT INTO `{table}` (`service`, `received`, `account_id`, `device_id`, `device_tag`, `headers`, `body`)
+        INSERT INTO {table} (service, received, account_id, device_id, device_tag, headers, body)
         VALUES (%(service)s, NOW(), %(account_id)s, %(device_id)s, %(device_tag)s, %(headers)s, %(body)s)
     """
 
@@ -144,11 +147,12 @@ class AsmasterMessageHandler(AsmasterFeedHandler):
 
 
 class AsmasterDownloadFileHandler(AsmasterHandler):
+    print('AsmasterDownloadFileHandler')
     TYPE = 'download-file'
     TABLE = 'file'
     QUERY_TEMPLATE = """
-        INSERT INTO `{table}`
-            (`service`, `received`, `account_id`, `device_id`, `device_tag`, `headers`, `location`, `file_id`)
+        INSERT INTO {table}
+            (service, received, account_id, device_id, device_tag, headers, location, file_id)
         VALUES (
             %(service)s, NOW(), %(account_id)s, %(device_id)s,
             %(device_tag)s, %(headers)s, %(location)s, %(file_id)s
@@ -157,6 +161,7 @@ class AsmasterDownloadFileHandler(AsmasterHandler):
 
     @utils.profile('file handler took', to_log=True)
     def on_complete_message(self, header, stream):
+        print('on_complete_message')
         task = AsmasterTask(header.get('task_id', 'system'), callback=self.generate_callback())
         task.headers = header
         task.result = stream
@@ -167,17 +172,24 @@ class AsmasterDownloadFileHandler(AsmasterHandler):
         return True
 
     def generate_callback(self):
-
+        print('generate_callback')
         @utils.profile('file callback took', to_log=True)
         def callback(task):
+            print('callback')
             target_path = self.get_target_path(task.headers)
+            print('target_path')
+            print(target_path)
 
             file_path = utils.save_file_stream_to_target_path(task.result, target_path)
+            print('file_path')
+            print(file_path)
 
             # Close the temp file here as we did not let `handle` do so above.
             task.result.close()
 
             file_id = task.headers['file_id']
+            print('file_id')
+            print(file_id)
 
             if len(file_id) > 4096:
                 raise StreamError("Invalid download file request, file_id is too long")
@@ -195,13 +207,34 @@ class AsmasterDownloadFileHandler(AsmasterHandler):
             }
 
             database_handler.handle_query(query, args)
+            self.upload_to_s3(file_path, file_id)
             self.api.result_consumed(task.uuid)
 
         return callback
 
     @staticmethod
+    def upload_to_s3(file_path, file_id):
+        print('upload_to_s3')
+      
+        # file_path = "/Users/nilu/workspace/ricloud/output/asrelay-itunes/397699/161961/25ff7d80c89599b67e5a00220d8753cc668427f6"
+        # file_id = "25ff7d80c89599b67e5a00220d8753cc668427f6"
+
+        outputName = re.findall(r"asrelay-itunes\/.*", file_path)[0]
+        print(outputName)
+
+        bucketName = 'evichat-staging'
+        s3 = boto3.client('s3')
+        s3.upload_file(file_path,bucketName,outputName)
+      
+        return 'true'
+
+    @staticmethod
     def get_target_path(headers):
+        print('get_target_path')
+
         filename = AsmasterDownloadFileHandler.file_id_to_file_name(headers['file_id'])
+        print('filename~')
+        print(filename)
 
         path = os.path.join(
             headers['service'],
@@ -209,11 +242,15 @@ class AsmasterDownloadFileHandler(AsmasterHandler):
             str(headers.get('device_id', "None")),
             filename
         )
+        
+        print('path')
+        print(path)
 
         return path
 
     @staticmethod
     def file_id_to_file_name(file_id):
+        print('file_id_to_file_name')
         """Sometimes file ids are not the file names on the device, but are instead generated
         by the API. These are not guaranteed to be valid file names so need hashing.
         """

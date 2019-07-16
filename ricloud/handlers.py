@@ -73,11 +73,17 @@ class DataHandler(ChunkedDataHandler):
 
 class FileDownloadHandler(ChunkedDataHandler):
     TYPE = 'download-file'
+    print('FileDownloadHandler')
 
     def on_complete_message(self, header, stream):
+        print('on_complete_message')
         # Copy the contents from the tmp file to a new location
         filename = header.get('filename', header['task_id'])
+        print('filename')
+        print(filename)
         filename = os.path.join('files', filename)
+        print('filename_full_path?')
+        print(filename)
         with open(filename, 'wb') as out:
             while True:
                 data = stream.read(1024)

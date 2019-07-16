@@ -19,10 +19,15 @@ logger = logging.getLogger(__name__)
 
 
 def get_or_create_filepath(filename, directory=''):
+    print('get_or_create_filepath')
+
     absolute_dir = os.path.join(OUTPUT_DIR, directory)
+    print(absolute_dir)
 
     if not os.path.exists(absolute_dir):
         os.makedirs(absolute_dir)
+
+    print(os.path.join(absolute_dir, filename))
 
     return os.path.join(absolute_dir, filename)
 
