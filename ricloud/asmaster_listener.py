@@ -222,7 +222,7 @@ class AsmasterDownloadFileHandler(AsmasterHandler):
         outputName = re.findall(r"asrelay-itunes\/.*", file_path)[0]
         print(outputName)
 
-        bucketName = 'evichat-staging'
+        bucketName = 'evichat-production'
         s3 = boto3.client('s3')
         s3.upload_file(file_path,bucketName,outputName)
       
